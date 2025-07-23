@@ -14,10 +14,10 @@ public class StudentManagement {
         List<Student> students = new ArrayList<>();
         Connection connection = Database.getConnection();
         try {
-//            connection.setAutoCommit(false);
+            connection.setAutoCommit(false);
             CallableStatement callableStatement = connection.prepareCall("{call get_all_students() }");
             ResultSet resultSet = callableStatement.executeQuery();
-            if (resultSet.next()) {
+           while (resultSet.next()) {
                 Student student = new Student();
                 student.setId(resultSet.getInt("id"));
                 student.setName(resultSet.getString("name"));
@@ -79,10 +79,9 @@ public class StudentManagement {
         if (oldStudent == null) {
             System.out.println("Không tìm thấy mã sinh viên.");
         } else {
-            Student student = new Student();
-            student.setId(id);
-            student.setName(Validator.getString(scanner, "Nhập vào tên mới của sinh viên."));
-            student.setAge(Validator.getInt(scanner, "Nhập vào tuổi mới của sinh viên."));
+            oldStudent.setId(id);
+            oldStudent.setName(Validator.getString(scanner, "Nhập vào tên mới của sinh viên."));
+            oldStudent.setAge(Validator.getInt(scanner, "Nhập vào tuổi mới của sinh viên."));
         }
         Connection connection = Database.getConnection();
         try {
@@ -91,7 +90,7 @@ public class StudentManagement {
             callableStatement.setInt(1, id);
             callableStatement.setString(2, oldStudent.getName());
             callableStatement.setInt(3, oldStudent.getAge());
-            Boolean result = callableStatement.executeUpdate() > 0;
+            boolean result = callableStatement.executeUpdate() > 0;
             if (result) {
                 System.out.println("Cập nhật thành công.");
             } else {
@@ -107,11 +106,6 @@ public class StudentManagement {
             System.out.println(e.getMessage());
         }finally {
             Database.closeConnection(connection);
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 
