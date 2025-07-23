@@ -149,6 +149,7 @@ public class StudentManagement {
             }else {
                 System.out.println("Xóa sinh viên thành công.");
             }
+            
             connection.commit();
         }catch (SQLException e){
             try {
